@@ -1,0 +1,127 @@
+ 通过几天对mysql数据库管理系统的学习,不仅学到了如何使用sql操作数据库,同时也将他们与其他编程语言相结合.
+
+
+ 准备
+ 1.数据库的基本安装: linux---sudo apt install mysql-server
+ 2.python与数据库交互的接口: pymysql ----- sudo pip3 install pymysql
+
+
+ sql快速回顾:
+
+ 增删改查(insert,delete,update,select)
+ 
+ 为了效果更加直观,首先创建一个真实的数据库和表,然后对他们进行操作.
+
+ create database database_name charset=utf8;
+ use database_name;
+ create table table_name(
+ 	id int unsigned auto_increment primary key not null,
+ 	name varchar(20) not null,
+ 	age smallint unsigned default 0,
+ 	tel_num varchar(11) not null,
+ 	class_id smallint unsigned not null
+ );
+
+ 增:
+ 	insert into table_name(name,age,tel_num,class_id) values('Tom',20,'123456',1);
+ 查：
+ 	select name,age from table_name;
+ 改:
+ 	update table_name set name = 'Jack' where id=1;
+ 删:
+ 	delete from table_name where name='Jack';
+
+
+ sql中有许多的内置函数
+ 比如说:
+ 		count('用来计算某个属性的元素的总数')
+ 		avg('用来计算某个数值属性的平均值')
+ 		sum('用来计算某个数据属性的和')
+ 		max('用来获得某个属性中的最大值')
+ 		min('用来获得某个属性中的最小值')
+
+ 用法:
+ 		select count(field) from table_name where age = 20;
+ 		select avg(age) from table_name;
+ 		select sum(age) from table_name;
+ 		select max(age) from table_name;
+ 		select min(age) from table_name;
+---------------------------------------------------------------------------
+ 如果进行下一步的操作,需要向表中添加更多的数据.
+
+ 1.单行插入(大量的重复工作) 
+
+ 2.多行插入:
+ 			insert into table_name values (source1), (source2), (soucrce3),
+ 			.....;
+
+ 3.从文本中导入(需要数据符合表的格式)
+ 			source filename
+
+ 通过以上的操作,我已经获得足够的信息.
+
+--------------------------------------------------------------------------
+
+ 分组,排序,分页: group by field, order by field desc|asc, limit
+
+ 接下来我要查找一些特定的数据,以及按照想要的顺序对结果进行排序.
+
+ 1> 获得所有的年龄段并且按照从小到大排序
+ 	select age from table_name group by age order by age asc;
+
+ 2> 查询所有信息,按照年龄从大到小进行排序,如果年龄相同则按照class_id进行排序
+ 	select * from table_name order by age desc, class_id;
+
+ 3> 获取5个学生的信息
+ 	select * from table_name limit 0,5;
+-------------------------------------------------------------------------
+ 范围查询: between ... and , in
+
+ 1> 查询所有年龄在20至30岁之间的人的所有信息
+ 	select * from table_name where age between 20 and 30;
+
+ 2> 查询年龄是:20,22,25,27的人的所有信息
+ 	select * from table_name where age in (20,22,25,27);
+--------------------------------------------------------------------------
+ 子查询: 单行子查询, 多行子查询, 多行多列子查询 
+
+ 1> 查询年龄最大的人的所有信息(单行子查询)
+ 	select * from table_name where age = (select max(age) from table_name)
+
+ 2> 查询年龄大于平均年龄的所有人的信息
+ 	select * from table_name where age > (select avg(age) from table_name)
+
+ 3> 查询每个班年龄最大的人的所有信息
+ 	select * from table_name where (class_id, age) = (select class_id, max(age) from table_name group by class_id);
+--------------------------------------------------------------------------
+ 多表查询: 内连接,左连接,右连接(inner join, left join, right join)
+
+ 内链接: 查询到的结果只有在多张表中都存在才会显示.
+
+ 左连接: 查询到的结果中包含左表的特有信息以及右表中满足条件的信息,如果右表不存在该数据则用
+ null填充.
+
+ 右连接:同左连接.
+
+ 假设现在我有一张班级信息表(class_info),表中有班级的id和班级上课的地点.
+
+ 1> 查询所有已经分过班级的学生的信息
+ 	select * from table_name as a inner join class_info as b on a.class_id = b.id;
+
+ 2> 查询所有学生的信息,如果已经分班则打出班级信息,否则,显示现有的信息.
+ 	select * from table_name as a left join class_info as b on a.class_id = b.id;
+
+-------------------------------------------------------------------------- 
+
+
+
+
+
+
+
+
+
+
+
+
+
