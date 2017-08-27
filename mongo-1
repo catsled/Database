@@ -1,0 +1,104 @@
+  mongodb 学习
+
+  首次接触到非关系型数据库mongodb,相比于关系型数据库mysql中的数据库,表还有字段,在
+  mongo中代替的是:数据库,集合,还有文档.
+
+  语法格式(mongo): db.collection_name.do()
+
+  mongo的语法更像是操作python中的对象,以及其中的方法.
+
+  -------------------------------------------------------------------------
+
+  创建数据库:
+  			use database_name
+  			执行这条指令,mongo会在内存里创建一个数据库,并切换到该数据库中,为了防止空的数据库占用资源,mongo并不会在磁盘中创建该数据库,除非该数据库中存在数据.
+
+  创建集合:
+   			db.createCollection(collection_name,option)
+   			执行该指令,会在当前数据库中创建一个名为collection_name的集合用来保存接下来的文档信息.
+
+   			option:[capped,size]
+   			如果capped=true该集合可以存放的文档数量将会由size确定,该集合采用一种淘汰算法:当集合存满后,如果继续插入数据,那么,集合中的第一个数据将会被删除,新的数据存放在集合的最后位置.并且,该集合除了插入操作以外,不能对数据做其他的操作.
+
+  插入数据:
+  			db.collection_name.insert({})
+  			执行该指令,mongo会在集合collection_name中插入一条数据,数据以键值对的方式存储,为了区分数据,如果在插入数据的时候没有指定该文档的id,那么mongo会自动为该文档添加一个唯一的id用来区分不同的文档.
+
+  删除数据:
+  			db.collection_name.remove({condition}，{justOne:false})
+  			该指令用来删除满足条件的所有文档(如果justOne:false)如果 {justOne:true},那么只会删除第一个匹配的文档,如果不指定条件,
+  			那么将会删除该集合中的所有文档.
+
+  修改数据:
+  			db.collection_name.update({condition},{result},{multi:<bool>})
+  			该指令会将满足条件的文档中的信息更新为result中的结果,如果multi:true那么将会更新所有满足条件的文档,如果multi:false,那么只会更新第一个匹配到的文档.
+
+ --------------------------------------------------------------------------
+ 条件字段
+
+ 比较条件:
+         =    :    {field:value}
+         >    :    {field:{$gt:value}}
+         <    :    {field:{$lt:value}}
+         >=   :    {field:{$gte:value}}
+         <=   :    {field:{$lte:value}}
+         !=   :    {field:{$ne:value}}
+
+ 逻辑条件:
+ 		 and  :    {{field:value},{field:value}}
+ 		 or   :    {$or:[{field1:value},{field2:value}]}
+
+ 范围条件:
+ 		 in   :    {$in:{field:[value1,value2,...]}}
+ 		 nin  :    {$nin:{field:[value1,value2,...]}} 
+
+---------------------------------------------------------------------------
+ 正则表达式:
+
+ 1.{field:/exp/}
+ 2.{field:{$regex:exp}}
+
+---------------------------------------------------------------------------
+ 查看
+
+ 1.查看所有存在的数据库:show dbs
+
+ 2.查看当前所在的数据库:db
+
+ 3.查看当前数据据中的集合:show collections
+
+ --------------------------------------------------------------------------
+ 例:
+
+ 1> 创建一个数据库books
+    use books
+
+ 2> 向数据库books中添加一个集合computer(没有大小限制)
+  	db.createCollection('computer')
+
+ 3> 向集合computer添加两本书籍的信息
+    db.computer.insert({isbn:123456,name:tcp/ip,price:79})
+    db.computer.insert({isbn:123457,name:'data structure',price:99})
+
+ 4> 查询集合computer中的所有文档
+ 	db.computer.find()
+
+ 5> 查询集合computer中isbn为123456的文档
+ 	db.computer.find({isbn:123456})
+
+ 6> 查询集合computer中价格大于50的书籍
+ 	db.computer.find({price:{$gt:50}})
+
+ 7> 查询集合computer中价格小于80的书籍
+ 	db.computer.find({price:{$lt:80}})
+
+ 8> 修改集合computer中name为tcp/ip的图书价格为69
+ 	db.computer.update({name:tcp/ip},{$set:{price:69}})
+
+ 9> 删除集合中价格小于70的书籍
+ 	db.computer.remove({price:{$lt:70}})
+
+--------------------------------------------------------------------------
+
+
+
