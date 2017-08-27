@@ -1,0 +1,38 @@
+管理数据库
+
+在学习的时候，我用的主要是root用户,他可以对数据库进行任意的操作,也就是说他有对数据库操作的所有权限.
+
+但是,在实际的生产环境中,为了保护数据库的安全性,以及数据的安全性,需要创建一些只拥有特定权限的账户来对数据库的数据进行操作.
+
+---------------------------------------------------------------------------
+用户与权限
+
+1> 创建新用户并赋予对某一个表的查询权限
+   grant select on database.table to 'user'@'host(%)' identified by 'pwd';
+
+2> 向用户添加对表的更新权限
+   grant update on database.table to 'user';
+
+3> 取消用户对表的更新权限
+   revoke update on database.table from 'user'@'host';
+
+4> 创建一个对某个数据库拥有所有权限的用户
+   grant all privileges on database.* to 'user'@'host(%)' identified by 'pwd'
+
+5> 查看用户有哪些权限
+   show grants for user;
+
+6> 修改用户的密码
+   1.在shell环境中修改:mysqladmin -u user -p password 'new_pwd';
+   2.root 用户进行修改
+     update mysql.user set authentication_string = password(new_pwd) where user = 'new_me';
+     flush privileges;
+
+7> 删除账户
+   1.drop user 'user'@'host';
+   2.root用户:
+     delete from mysql.user where user='user';
+     flush privileges; 
+---------------------------------------------------------------------------
+
+
