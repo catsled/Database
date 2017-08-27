@@ -1,0 +1,122 @@
+为了减少操作数据库时的重复工作,可以使用mysql中的函数,存储过程,视图,索引
+
+--------------------------------------------------------------------------
+
+变量:临时变量, 用户变量, 系统变量
+    临时变量:
+    		1.declare name type default value;(创建临时变量设置默认值)
+    		  set name = value;(赋值)
+   	用户变量:(存在于当前用户的会话环境中)
+   	        1.set @name = value;(创建用户变量并赋值)
+   	        2.set @name = new_value;(为用户变量赋予新的值)
+   	系统变量:(存在于数据库环境中)
+   			1.set @@name = value;
+   			2.set @@name = new_value;
+
+--------------------------------------------------------------------------
+
+函数
+	delimiter )); (更改结束符)
+    create function f_name(arg1 type,args2 type,...) returns type
+    begin
+    func_body
+    return value(type)
+    end 
+    delimiter ; (还原结束符)
+
+    调用: select func_name([arg1])
+    删除: drop function func_name;
+
+    例1：
+        创建一个函数,返回1~100的和
+        delimiter ));
+        create function one_hunderd() returns int
+        begin
+        declare result int default 0;
+        declare i int default 1;
+        while i <= 100
+        do
+        set result = result + i;
+        set i = i + 1;
+        end while;
+        return result;
+        end));
+        delimiter ;
+
+        调用: select one_hunderd();
+
+    例2:
+        创建一个函数,返回特定表中的行数
+        delimiter ));
+        create function c_rows() returns int
+        begin
+        declare result int default 0;
+        select count(*) from table_name into result;
+        return result;
+        end));
+        delimiter ;
+--------------------------------------------------------------------------
+
+   存储过程:在函数中对sql的限制比较严重,所以需要使用存储过程来封装sql.
+
+   形参: in(传入类型), out(传出类型)
+
+   create procedure p_name([in|out] arg1 type, [in|out] arg2 type, ..)
+   begin
+   sql
+   end
+
+   调用: call procedure_name([arg1]);
+   删除: drop procedure p_name;
+
+   1> 创建一个存储过程,首先查询某表中的所有内容,然后添加一列新的元素,再次查询.
+   	  delimiter ));
+      create procedure get_add()
+      begin
+      select * from table_name;
+      insert into table_name values(25,'plus');
+      select * from table_name;
+      end));
+      delimiter ; 
+
+   2> 创建一个存储过过程,传入一个关键字,删除该关键字,然后输出所有元素.
+   	  delimiter ));
+   	  create procedure delete_get(in special int)
+   	  begin
+   	  delete from goods_brands where id = special;
+   	  select * from goods_brands;
+   	  end));
+   	  delimiter ;
+   
+   3> 创建一个存储过程,传入一个关键字,更新满足条件的数据,然后输出.
+   	  delimiter ));
+   	  create procedure update_get(in special int)
+   	  begin
+   	  update table_name set name ='new_name' where id = special;
+   	  select * from table_name;
+   	  end));
+   	  delimiter ;
+--------------------------------------------------------------------------
+	被创建的函数和过程的信息保存在mysql.proc中.
+	可以通过select * from proc\G 查看
+--------------------------------------------------------------------------
+  视图:使用查询到的结果来创建的虚表(没有数据源,也就是无法进行增删改)
+  create view view_name as select * from table_name;
+
+  删除:drop view view_name;
+
+ -------------------------------------------------------------------------
+  
+  索引:加快对数据的查询速度
+  	   但是也会减慢对数据的修改速度
+
+  	   一个表的主键默认就是索引
+
+  	   创建: create index index_name on table(field(length));
+  	   使用: select * from table_name where filed = xx;
+  	   删除: drop index index_name on table_name;
+
+
+ 
+
+
