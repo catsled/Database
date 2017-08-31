@@ -1,0 +1,45 @@
+索引
+
+索引是用来提高数据的查询效率的.
+
+---------------------------------------------------------------------------
+
+查看索引:
+		db.collection.getIndexes()
+
+建立索引:
+		唯一索引:
+		db.collection.ensureIndex({field:[1,-1]},{unique:true})
+		(1)代表升序,(-1)代表降序
+		联合索引:
+		db.collection.ensureIndex({field1:[1,-1],field2:[1,-1]})
+
+删除索引:
+		db.collection.dropIndex('index_name')
+
+---------------------------------------------------------------------------
+
+数据的备份与恢复
+
+备份:
+	mongodump -h dbhost -d dbname -o new_place
+
+恢复:
+	mongorestore -h dbhost -d dbname --dir dbplace
+
+---------------------------------------------------------------------------
+
+与python的交互:pymongo
+
+
+
+
+
+
+
+
+
+
+
+
+
