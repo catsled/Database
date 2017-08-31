@@ -1,0 +1,82 @@
+redis
+
+redis是一个非关系数据库N,他的优点是直接在内存中对数据进行操作,相比于其他数据库他的存储速度非常快.
+
+redis中所有数据的存储都以(key-value)型存储.
+
+---------------------------------------------------------------------------
+redis支持5种数据结构及类型
+
+1.string
+2.list
+3.set
+4.hash
+5.zset
+
+---------------------------------------------------------------------------
+string类型相关操作
+
+1.get key                         # 获取key相对应的值
+2.set key value                   # 设置或更新key的值 
+3.del key                         # 删除key并同时删除key中的值
+4.mset key1 value1 key2 value2 .. # 一次为多个键设置值
+5.mget key1 key2 ...              # 一次获取多个键的值
+6.append key value                # 在key后面拼接一个value
+7.setex key time(sec) name        # 设置一个存在时间为time的key
+
+---------------------------------------------------------------------------
+list类型相关操作
+
+1.rpush key value1 value2 ...     # 从列表key右边插入value
+2.lpush key value1 value2 ...     # 从列表key左边插入value
+3.rpop key                        # 从右边弹出一个value 
+4.lpop key                        # 从左边弹出一个value
+5.lindex key index [start:0]	  # 使用下标从key中获得相对应的值
+6.lrange key start end            # 获取key中从start开始至end的所有值
+7.linsert key before h n          # 在值h之前添加新值n
+8.linsert key after h n           # 在值h之后添加新值n
+9.lset key index new_value        # 将index为位置的值修改为new_value
+10.lrem key count value           # 删除count个value
+
+---------------------------------------------------------------------------
+set类型相关操作
+
+1.sadd key value                  # 向集合key中添加一个新的值
+2.smembers key                    # 查看集合key中的所有元素
+3.sismember key value             # 检查集合key中是否有value元素
+4.srem key value                  # 删除集合key中的元素value
+
+---------------------------------------------------------------------------
+hash类型相关操作
+
+1.hset key sub-key1 value1        # 向哈希表key中添加新的键值对或者更新
+2.hget key sub-key                # 获取哈希表key中的sub-key的值
+3.hdel key sub-key                # 删除哈希表key中的sub-key以及他的值
+4.hgetall key                     # 获取哈希表key中的所有键值
+5.hvals key                       # 获取哈希表key中的所有值
+6.hmset key sub-key1 value1 ..    # 一次向哈希表中添加多个key-value
+7.hmget key sub-key1 sub-key2     # 一次获取多个key对应的value
+8.hkeys key                       # 获取哈希表key中的所有sub-key
+
+---------------------------------------------------------------------------
+zset类型相关操作
+
+1.zadd key score name             # 向有序集合key中添加name(score为权重)
+2.zrange key start end            # 获取有序集合key中的所有name
+3.zrange key start end withscores # 获取有序集合key中的所有name以及score
+4.zrem key name                   # 删除有序集合key中的name
+5.zrangebyscore key min max       # 获取权重在min至max的name
+6.zremrangebyscore key min max    # 删除权重在min至max的name
+
+---------------------------------------------------------------------------
+其他操作
+
+1.type key                        # 获取key的类型
+2.flushall                        # 清除数据库
+3.keys key_name                   # 查找所有key_name(支持通配符)
+4.exists key                      # 判断key是否存在
+5.del key                         # 删除key
+6.expire key time(sec)            # 为key设置生存时间
+7.ttl key                         # 查看key的生存时间
+
+---------------------------------------------------------------------------
