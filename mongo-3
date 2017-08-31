@@ -1,0 +1,144 @@
+接下来对mongo中较为复杂的聚合进行总结(aggregate)
+
+在聚合中有很多常用的管道:
+
+$group:以(_id)的值作为关键字对数据进行分组
+$match:筛选出符合条件的数据
+$sort: 对数据排序后输出
+$limit:限定输出数据的个数
+$skip :跳过指定数量的数据
+$unwind:拆分列表数据
+$project:对接收到的数据进行投影操作
+
+
+通常将管道作为数据传输的中介,但是在mongo中,管道既可以用来传输数据也可以用来对数据进行处理.
+
+--------------------------------------------------------------------------
+
+假设现在有一个集合(stu),集合中有大量的学生信息,他们都有关键字--name,age,gender
+
+--------------------------------------------------------------------------
+$group
+
+db.collection.aggregate({
+	$group:{
+		_id:field,
+		new_field1:{query1},
+		[new_field2:{query2}]
+	}
+})
+
+$group管道首先以(_id)的值(field)为关键字进行分组,然后通过(query1,query2)得到的结果添加新的{key:value}(new_field:{query}).
+
+例:
+
+以性别进行分组,同时获得每组的平均年龄,并计算每组的总人数
+
+db.stu.aggregate({
+	$group:{
+		_id:'$gender',
+		avg_age:{$avg:'$age'},
+		total:{$sum:1}
+	}
+})
+
+---------------------------------------------------------------------------
+$match
+
+db.collection.aggregate({
+	$match:{condition}
+})
+
+$match管道显示满足{condition}的数据.
+
+例:
+
+显示年龄大于20岁的学生信息
+
+db.stu.aggregate({
+	$match:{age:{$gt:20}}
+})
+
+--------------------------------------------------------------------------
+$sort
+
+db.collection.aggregate({
+	$sort:{'field':[1,-1]}
+})
+
+以(filed)为关键字对collection中的数据进行排序.
+其中(1)代表升序排序,(-1)代表降序排序
+
+例:
+
+按照年龄进行升序排序
+
+db.stu.aggregate({
+	$sort:{'age':1}
+})
+
+--------------------------------------------------------------------------
+$limit
+
+db.collection.aggregate({
+	$limit:num
+})
+
+在collection中至多取num个数据.
+
+例:
+
+取前3个学生的信息
+
+db.stu.aggregate({
+	$limit:3
+})
+
+--------------------------------------------------------------------------
+$skip
+
+db.collection.aggregate({
+	$skip:num
+})
+
+跳过num个数据然后取所有的数据.
+
+例:
+
+取除了前3个学生的数据
+
+db.stu.aggregate({
+	$skip:3
+})
+
+--------------------------------------------------------------------------
+$unwind
+
+db.collection.aggregate({
+	$unwind:'$field'
+})
+
+$unwind将(filed)拆分(如果filed是一个列表),然后产生(filed)数量的数据.
+
+例:
+
+现在要选班服,班服有三种颜色(red,blue,white),有三种型号(small,middle,large)
+显示所有衣服的信息.
+
+db.clothes.aggregate(
+	{$unwind:'$colour'},
+	{$unwind:'$size'}
+)
+
+--------------------------------------------------------------------------
+$project
+
+db.collection.aggregate({
+	$project:{field1:1,field2:0}
+})
+
+$project显示field1,屏蔽field2
+其中(1)代表显示,(0)代表不显示
+
+--------------------------------------------------------------------------
+
